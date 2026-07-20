@@ -3,21 +3,24 @@ from ingestion.services.reference_service import ReferenceService
 from ingestion.services.corporate_action_service import CorporateActionService
 from unittest.mock import patch, MagicMock
 
+
 @patch("ingestion.services.tick_service.get_session")
 def test_tick_ingestion(mock_session):
     mock_session.return_value.__enter__ = MagicMock()
     mock_session.return_value.__exit__ = MagicMock(return_value=False)
 
     service = TickService()
-    success, error = service.ingest({
-        "ticker": "AAPL",
-        "price": 189.52,
-        "volume": 200,
-        "tick_type": "TRADE",
-        "source_id": "XNAS",
-        "source_name": "NASDAQ",
-        "timestamp": "2026-07-16T10:30:00.123456",
-    })
+    success, error = service.ingest(
+        {
+            "ticker": "AAPL",
+            "price": 189.52,
+            "volume": 200,
+            "tick_type": "TRADE",
+            "source_id": "XNAS",
+            "source_name": "NASDAQ",
+            "timestamp": "2026-07-16T10:30:00.123456",
+        }
+    )
     assert success is True
     assert error is None
 
@@ -27,15 +30,17 @@ def test_invalid_tick_rejected(mock_session):
     mock_session.return_value.__enter__ = MagicMock()
     mock_session.return_value.__exit__ = MagicMock(return_value=False)
     service = TickService()
-    success, error = service.ingest({
-        "ticker": "AAPL",
-        "price": -5.0,
-        "volume": 200,
-        "tick_type": "TRADE",
-        "source_id": "XNAS",
-        "source_name": "NASDAQ",
-        "timestamp": "2026-07-16T10:30:00",
-    })
+    success, error = service.ingest(
+        {
+            "ticker": "AAPL",
+            "price": -5.0,
+            "volume": 200,
+            "tick_type": "TRADE",
+            "source_id": "XNAS",
+            "source_name": "NASDAQ",
+            "timestamp": "2026-07-16T10:30:00",
+        }
+    )
     assert success is False
     assert error is not None
 
@@ -45,10 +50,12 @@ def test_invalid_tick_missing_field(mock_session):
     mock_session.return_value.__enter__ = MagicMock()
     mock_session.return_value.__exit__ = MagicMock(return_value=False)
     service = TickService()
-    success, error = service.ingest({
-        "ticker": "AAPL",
-        "price": 100.0,
-    })
+    success, error = service.ingest(
+        {
+            "ticker": "AAPL",
+            "price": 100.0,
+        }
+    )
     assert success is False
     assert error is not None
 
@@ -83,6 +90,7 @@ def test_reference_ingestion(mock_session):
     )
     assert success is True
     assert error is None
+
 
 @patch("ingestion.services.corporate_action_service.get_session")
 def test_corporate_action_ingestion(mock_session):
