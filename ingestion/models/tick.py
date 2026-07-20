@@ -2,10 +2,12 @@ from pydantic import BaseModel, Field
 from enum import Enum
 from datetime import datetime
 
-class TickType(str ,Enum):
-    TRADE = 'TRADE'
-    BID = 'BID'
-    ASK = 'ASK'
+
+class TickType(str, Enum):
+    TRADE = "TRADE"
+    BID = "BID"
+    ASK = "ASK"
+
 
 class TickEvent(BaseModel):
     ticker: str
@@ -15,4 +17,3 @@ class TickEvent(BaseModel):
     source_id: str
     source_name: str
     timestamp: datetime
-

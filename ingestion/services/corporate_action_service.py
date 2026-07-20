@@ -1,5 +1,5 @@
 from ingestion.models.corporate_action import CorporateAction
-from ingestion.staging.database import CorporateActionRecord,get_session
+from ingestion.staging.database import CorporateActionRecord, get_session
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,14 +17,14 @@ class CorporateActionService:
 
         # Step 2: Convert to SQLAlchemy record
         record = CorporateActionRecord(
-            action_id = corp_action_data.action_id,
-            ticker = corp_action_data.ticker,
-            action_type = corp_action_data.action_type,
-            ratio = corp_action_data.ratio,
-            index_id = corp_action_data.index_id,
-            effective_date = corp_action_data.effective_date,
-            announced_date = corp_action_data.announced_date,
-            status = corp_action_data.status,
+            action_id=corp_action_data.action_id,
+            ticker=corp_action_data.ticker,
+            action_type=corp_action_data.action_type,
+            ratio=corp_action_data.ratio,
+            index_id=corp_action_data.index_id,
+            effective_date=corp_action_data.effective_date,
+            announced_date=corp_action_data.announced_date,
+            status=corp_action_data.status,
         )
         # Step 3: Insert into database
         try:

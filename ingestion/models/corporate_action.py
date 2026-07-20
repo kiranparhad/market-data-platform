@@ -3,14 +3,17 @@ from enum import Enum
 from datetime import date
 from typing import Optional
 
-class ActionType(str,Enum):
+
+class ActionType(str, Enum):
     SPLIT = "SPLIT"
     ADDITION = "ADDITION"
     REMOVAL = "REMOVAL"
 
-class Status(str,Enum):
+
+class Status(str, Enum):
     CONFIRMED = "CONFIRMED"
     PENDING = "PENDING"
+
 
 class CorporateAction(BaseModel):
     action_id: str

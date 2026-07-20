@@ -8,7 +8,7 @@ from sqlalchemy import (
     DateTime,
     Date,
     Enum,
-    BigInteger
+    BigInteger,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker
 from contextlib import contextmanager
@@ -39,6 +39,7 @@ class TickRecord(Base):
     source_name = Column(String, nullable=False)
     timestamp = Column(DateTime, nullable=False, index=True)
 
+
 class ReferenceSnapshot(Base):
     __tablename__ = "reference_snapshots"
 
@@ -47,11 +48,14 @@ class ReferenceSnapshot(Base):
     effective_date = Column(Date, nullable=False, index=True)
     version = Column(Integer, nullable=False)
 
+
 class ConstituentRecord(Base):
     __tablename__ = "constituents"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    snapshot_id = Column(Integer, ForeignKey("reference_snapshots.id"), nullable=False, index=True)
+    snapshot_id = Column(
+        Integer, ForeignKey("reference_snapshots.id"), nullable=False, index=True
+    )
     ticker = Column(String, nullable=False, index=True)
     company_name = Column(String, nullable=False)
     weight = Column(Float, nullable=False)
@@ -59,16 +63,16 @@ class ConstituentRecord(Base):
     sector = Column(String, nullable=False)
 
 
-
-
-class ActionType(str,enum.Enum):
+class ActionType(str, enum.Enum):
     SPLIT = "SPLIT"
     ADDITION = "ADDITION"
     REMOVAL = "REMOVAL"
 
-class Status(str,enum.Enum):
+
+class Status(str, enum.Enum):
     CONFIRMED = "CONFIRMED"
     PENDING = "PENDING"
+
 
 class CorporateActionRecord(Base):
     __tablename__ = "corporate_actions"
@@ -81,8 +85,6 @@ class CorporateActionRecord(Base):
     effective_date = Column(Date, nullable=False, index=True)
     announced_date = Column(Date, nullable=False)
     status = Column(Enum(Status), nullable=False)
-
-
 
 
 @contextmanager
@@ -101,5 +103,5 @@ def get_session():
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
     # from sqlalchemy.schema import CreateTable
-    # print(CreateTable(ConstituentRecord.__table__))    
+    # print(CreateTable(ConstituentRecord.__table__))
     print("All tables created successfully.")

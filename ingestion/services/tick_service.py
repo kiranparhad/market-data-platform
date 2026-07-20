@@ -1,5 +1,5 @@
 from ingestion.models.tick import TickEvent
-from ingestion.staging.database import TickRecord,get_session
+from ingestion.staging.database import TickRecord, get_session
 import logging
 
 logger = logging.getLogger(__name__)
