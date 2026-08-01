@@ -3,7 +3,7 @@ from sqlalchemy import (
     ForeignKey,
     Column,
     String,
-    Float,
+    Numeric,
     Integer,
     DateTime,
     Date,
@@ -13,9 +13,12 @@ from sqlalchemy import (
 from sqlalchemy.orm import declarative_base, sessionmaker
 from contextlib import contextmanager
 import enum
+import os
 
-DATABASE_URL = "postgresql://kiran:localdev@localhost:5432/market_data"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is required")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -32,12 +35,12 @@ class TickRecord(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     ticker = Column(String, nullable=False, index=True)
-    price = Column(Float, nullable=False)
+    price = Column(Numeric(20,8), nullable=False)
     volume = Column(Integer, nullable=False)
     tick_type = Column(Enum(TickTypeEnum), nullable=False)
     source_id = Column(String, nullable=False)
     source_name = Column(String, nullable=False)
-    timestamp = Column(DateTime, nullable=False, index=True)
+    timestamp = Column(DateTime(timezone=True), nullable=False)
 
 
 class ReferenceSnapshot(Base):
@@ -58,7 +61,7 @@ class ConstituentRecord(Base):
     )
     ticker = Column(String, nullable=False, index=True)
     company_name = Column(String, nullable=False)
-    weight = Column(Float, nullable=False)
+    weight = Column(Numeric(18,12), nullable=False)
     shares_outstanding = Column(BigInteger, nullable=False)
     sector = Column(String, nullable=False)
 
@@ -80,7 +83,7 @@ class CorporateActionRecord(Base):
     action_id = Column(String, primary_key=True)
     ticker = Column(String, nullable=False, index=True)
     action_type = Column(Enum(ActionType), nullable=False)
-    ratio = Column(Float, nullable=True)
+    ratio = Column(Numeric(20,10), nullable=True)
     index_id = Column(String, nullable=True, index=True)
     effective_date = Column(Date, nullable=False, index=True)
     announced_date = Column(Date, nullable=False)

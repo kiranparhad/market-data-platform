@@ -1,12 +1,13 @@
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import List
+from decimal import Decimal
 
 
 class Constituent(BaseModel):
     ticker: str
     company_name: str
-    weight: float = Field(ge=0, le=1)
+    weight: Decimal = Field(ge=0, le=1)
     shares_outstanding: int = Field(ge=0)
     sector: str
 

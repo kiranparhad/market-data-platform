@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: pip install ruff black pytest pydantic sqlalchemy psycopg2-binary
+        run: pip install ruff black pytest pydantic sqlalchemy psycopg2-binary python-dotenv
       - name: Lint
         run: ruff check .
       - name: Format check

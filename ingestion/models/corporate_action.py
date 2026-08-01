@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+from decimal import Decimal
 from enum import Enum
 from datetime import date
-from typing import Optional
 
 
 class ActionType(str, Enum):
@@ -16,11 +16,36 @@ class Status(str, Enum):
 
 
 class CorporateAction(BaseModel):
-    action_id: str
-    ticker: str
+    action_id: str = Field(min_length=1)
+    ticker: str = Field(min_length=1)
     action_type: ActionType
-    ratio: Optional[float] = Field(None, gt=0)
-    index_id: Optional[str] = None
+    ratio: Decimal | None = Field(default=None, gt=0)
+    index_id: str | None = None
     effective_date: date
     announced_date: date
     status: Status
+
+    @model_validator(mode="after")
+    def validate_action_fields(self):
+        if self.action_type == ActionType.SPLIT:
+            if self.ratio is None:
+                raise ValueError("ratio is required for SPLIT")
+            if self.index_id is not None:
+                raise ValueError("index_id is not applicable to SPLIT")
+
+        if self.action_type in {ActionType.ADDITION, ActionType.REMOVAL}:
+            if not self.index_id:
+                raise ValueError(
+                    "index_id is required for additions and removals"
+                )
+            if self.ratio is not None:
+                raise ValueError(
+                    "ratio is only applicable to splits"
+                )
+
+        if self.announced_date > self.effective_date:
+            raise ValueError(
+                "announced_date cannot be after effective_date"
+            )
+
+        return self
