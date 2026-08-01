@@ -1,7 +1,8 @@
-from ingestion.services.tick_service import TickService
-from ingestion.services.reference_service import ReferenceService
+from unittest.mock import MagicMock, patch
+
 from ingestion.services.corporate_action_service import CorporateActionService
-from unittest.mock import patch, MagicMock
+from ingestion.services.reference_service import ReferenceService
+from ingestion.services.tick_service import TickService
 
 
 @patch("ingestion.services.tick_service.get_session")

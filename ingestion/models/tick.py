@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field, field_validator
-from enum import Enum
 from datetime import datetime, timezone
 from decimal import Decimal
+from enum import Enum
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class TickType(str, Enum):

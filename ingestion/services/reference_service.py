@@ -1,10 +1,11 @@
+import logging
+
 from ingestion.models.reference import ReferenceData
 from ingestion.staging.database import (
-    get_session,
-    ReferenceSnapshot,
     ConstituentRecord,
+    ReferenceSnapshot,
+    get_session,
 )
-import logging
 
 logger = logging.getLogger(__name__)
 

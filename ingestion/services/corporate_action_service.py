@@ -1,6 +1,7 @@
+import logging
+
 from ingestion.models.corporate_action import CorporateAction
 from ingestion.staging.database import CorporateActionRecord, get_session
-import logging
 
 logger = logging.getLogger(__name__)
 
