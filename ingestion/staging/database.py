@@ -59,9 +59,7 @@ class ConstituentRecord(Base):
     __tablename__ = "constituents"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    snapshot_id = Column(
-        Integer, ForeignKey("reference_snapshots.id"), nullable=False, index=True
-    )
+    snapshot_id = Column(Integer, ForeignKey("reference_snapshots.id"), nullable=False, index=True)
     ticker = Column(String, nullable=False, index=True)
     company_name = Column(String, nullable=False)
     weight = Column(Numeric(18, 12), nullable=False)
