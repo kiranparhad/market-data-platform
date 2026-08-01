@@ -14,6 +14,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from contextlib import contextmanager
 import enum
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -35,7 +38,7 @@ class TickRecord(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     ticker = Column(String, nullable=False, index=True)
-    price = Column(Numeric(20,8), nullable=False)
+    price = Column(Numeric(20, 8), nullable=False)
     volume = Column(Integer, nullable=False)
     tick_type = Column(Enum(TickTypeEnum), nullable=False)
     source_id = Column(String, nullable=False)
@@ -61,7 +64,7 @@ class ConstituentRecord(Base):
     )
     ticker = Column(String, nullable=False, index=True)
     company_name = Column(String, nullable=False)
-    weight = Column(Numeric(18,12), nullable=False)
+    weight = Column(Numeric(18, 12), nullable=False)
     shares_outstanding = Column(BigInteger, nullable=False)
     sector = Column(String, nullable=False)
 
@@ -83,7 +86,7 @@ class CorporateActionRecord(Base):
     action_id = Column(String, primary_key=True)
     ticker = Column(String, nullable=False, index=True)
     action_type = Column(Enum(ActionType), nullable=False)
-    ratio = Column(Numeric(20,10), nullable=True)
+    ratio = Column(Numeric(20, 10), nullable=True)
     index_id = Column(String, nullable=True, index=True)
     effective_date = Column(Date, nullable=False, index=True)
     announced_date = Column(Date, nullable=False)

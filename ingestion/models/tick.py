@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
+
 
 class TickType(str, Enum):
     TRADE = "TRADE"
@@ -18,9 +19,13 @@ class TickEvent(BaseModel):
     source_name: str
     timestamp: datetime
 
-    @field_validator("timestamp")
+    @field_validator("timestamp", mode="before")
     @classmethod
-    def require_timezone(cls, value: datetime) -> datetime:
-        if value.tzinfo is None or value.utcoffset() is None:
-            raise ValueError("timestamp must include timezone information")
+    def normalize_timestamp(cls, value):
+        if isinstance(value, str):
+            value = datetime.fromisoformat(value)
+
+        if isinstance(value, datetime) and value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+
         return value

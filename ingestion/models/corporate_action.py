@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, model_validator
 from decimal import Decimal
 from enum import Enum
 from datetime import date
+from typing import Optional
 
 
 class ActionType(str, Enum):
@@ -19,8 +20,8 @@ class CorporateAction(BaseModel):
     action_id: str = Field(min_length=1)
     ticker: str = Field(min_length=1)
     action_type: ActionType
-    ratio: Decimal | None = Field(default=None, gt=0)
-    index_id: str | None = None
+    ratio: Optional[Decimal] = Field(default=None, gt=0)
+    index_id: Optional[str] = None
     effective_date: date
     announced_date: date
     status: Status
@@ -35,17 +36,11 @@ class CorporateAction(BaseModel):
 
         if self.action_type in {ActionType.ADDITION, ActionType.REMOVAL}:
             if not self.index_id:
-                raise ValueError(
-                    "index_id is required for additions and removals"
-                )
+                raise ValueError("index_id is required for additions and removals")
             if self.ratio is not None:
-                raise ValueError(
-                    "ratio is only applicable to splits"
-                )
+                raise ValueError("ratio is only applicable to splits")
 
         if self.announced_date > self.effective_date:
-            raise ValueError(
-                "announced_date cannot be after effective_date"
-            )
+            raise ValueError("announced_date cannot be after effective_date")
 
         return self
