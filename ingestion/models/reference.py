@@ -1,0 +1,20 @@
+from datetime import date
+from decimal import Decimal
+from typing import List
+
+from pydantic import BaseModel, Field
+
+
+class Constituent(BaseModel):
+    ticker: str
+    company_name: str
+    weight: Decimal = Field(ge=0, le=1)
+    shares_outstanding: int = Field(ge=0)
+    sector: str
+
+
+class ReferenceData(BaseModel):
+    index_id: str
+    effective_date: date
+    version: int = Field(gt=0, description="Version should be > 0")
+    constituents: List[Constituent]
