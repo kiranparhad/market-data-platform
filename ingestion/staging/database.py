@@ -1,6 +1,7 @@
 import enum
 import os
 from contextlib import contextmanager
+from functools import lru_cache
 
 from dotenv import load_dotenv
 from sqlalchemy import (
@@ -19,13 +20,22 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL environment variable is required")
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
+
+@lru_cache
+def get_engine():
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        raise RuntimeError("DATABASE_URL environment variable is required")
+
+    return create_engine(database_url)
+
+
+@lru_cache
+def get_session_factory():
+    return sessionmaker(bind=get_engine())
 
 
 class TickTypeEnum(str, enum.Enum):
@@ -60,7 +70,12 @@ class ConstituentRecord(Base):
     __tablename__ = "constituents"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    snapshot_id = Column(Integer, ForeignKey("reference_snapshots.id"), nullable=False, index=True)
+    snapshot_id = Column(
+        Integer,
+        ForeignKey("reference_snapshots.id"),
+        nullable=False,
+        index=True,
+    )
     ticker = Column(String, nullable=False, index=True)
     company_name = Column(String, nullable=False)
     weight = Column(Numeric(18, 12), nullable=False)
@@ -94,7 +109,9 @@ class CorporateActionRecord(Base):
 
 @contextmanager
 def get_session():
-    session = SessionLocal()
+    session_factory = get_session_factory()
+    session = session_factory()
+
     try:
         yield session
         session.commit()
@@ -106,7 +123,5 @@ def get_session():
 
 
 if __name__ == "__main__":
-    Base.metadata.create_all(engine)
-    # from sqlalchemy.schema import CreateTable
-    # print(CreateTable(ConstituentRecord.__table__))
+    Base.metadata.create_all(get_engine())
     print("All tables created successfully.")
