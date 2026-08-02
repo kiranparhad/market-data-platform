@@ -11,9 +11,11 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
+    UniqueConstraint,
     create_engine,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -46,9 +48,23 @@ class TickTypeEnum(str, enum.Enum):
 
 class TickRecord(Base):
     __tablename__ = "ticks"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_id",
+            "ticker",
+            "timestamp",
+            "tick_type",
+            name="uq_tick_source_event",
+        ),
+        Index(
+            "ix_ticks_ticker_timestamp",
+            "ticker",
+            "timestamp",
+        ),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    ticker = Column(String, nullable=False, index=True)
+    ticker = Column(String, nullable=False)
     price = Column(Numeric(20, 8), nullable=False)
     volume = Column(Integer, nullable=False)
     tick_type = Column(Enum(TickTypeEnum), nullable=False)
@@ -59,7 +75,14 @@ class TickRecord(Base):
 
 class ReferenceSnapshot(Base):
     __tablename__ = "reference_snapshots"
-
+    __table_args__ = (
+        UniqueConstraint(
+            "index_id",
+            "effective_date",
+            "version",
+            name="uq_reference_snapshot_version",
+        ),
+    )
     id = Column(Integer, primary_key=True, autoincrement=True)
     index_id = Column(String, nullable=False, index=True)
     effective_date = Column(Date, nullable=False, index=True)
@@ -68,6 +91,13 @@ class ReferenceSnapshot(Base):
 
 class ConstituentRecord(Base):
     __tablename__ = "constituents"
+    __table_args__ = (
+        UniqueConstraint(
+            "snapshot_id",
+            "ticker",
+            name="uq_constituent_snapshot_ticker",
+        ),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     snapshot_id = Column(
